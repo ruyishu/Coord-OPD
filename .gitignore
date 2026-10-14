@@ -1,0 +1,33 @@
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+config.env
+*.pem
+*.key
+# Reference checkouts, datasets, checkpoints, and generated runs
+.local/
+data/
+datasets/
+checkpoints/
+models/
+runs/
+logs/
+wandb/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.bin
+# Python and editor caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

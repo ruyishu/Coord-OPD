@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "template_not_a_training_config",
+  "project": "Coord-OPD",
+  "repository": "https://github.com/ruyishu/Coord-OPD",
+  "run_id": null,
+  "method_id": null,
+  "allowed_method_ids": [
+    "initial",
+    "rl",
+    "opd_text",
+    "opd_coord",
+    "opd_joint",
+    "opd_hybrid"
+  ],
+  "code_commit": null,
+  "upstream": {
+    "repository": "https://github.com/kesenzhao/NV-CoT",
+    "ref_at_audit": "main",
+    "commit": "0d36f9c515fc40864c3c4497f5de73148b77b8ac"
+  },
+  "student": {
+    "model_id": null,
+    "revision": null,
+    "checkpoint_id": null,
+    "trainable_parameters": null
+  },
+  "teacher": {
+    "model_id": null,
+    "revision": null,
+    "checkpoint_id": null,
+    "frozen": true,
+    "capability_report": null
+  },
+  "data": {
+    "dataset_id": null,
+    "revision": null,
+    "split_manifest_sha256": null,
+    "dedup_group": "original_image_or_root_task"
+  },
+  "seed": null,
+  "protocol": {
+    "student_rollouts_per_prompt": 1,
+    "max_tool_calls": 2,
+    "max_child_calls": 0,
+    "loss_direction": "student_to_teacher",
+    "temperature": 1.0,
+    "protocol_verified": false
+  },
+  "hardware": {
+    "devices": [],
+    "peak_memory_gib": null,
+    "gpu_hours_by_model": {},
+    "teacher_preparation_gpu_hours_by_model": {}
+  },
+  "execution": {
+    "command": null,
+    "config_sha256": null,
+    "log_uri": null,
+    "checkpoint_uri": null,
+    "started_at": null,
+    "finished_at": null
+  },
+  "metrics": {
+    "accuracy": null,
+    "num_evaluated": null,
+    "failed_samples": null,
+    "inference_total_tokens": null,
+    "tool_calls_mean": null,
+    "wall_seconds": null
+  },
+  "trace_required_fields": [
+    "sample_id",
+    "policy_version",
+    "context_token_ids",
+    "response_token_ids",
+    "generated_mask",
+    "coarse_box",
+    "raw_action",
+    "final_box",
+    "action_transform_version",
+    "crop_hash"
+  ]
+}
