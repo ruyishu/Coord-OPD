@@ -31,7 +31,7 @@
 
 ## 模型、数据与资源
 
-- 老师/学生：必须同时具有可评分的 VLM 与训练有效的连续头；同架构强 checkpoint 优先，缺少连续头时先建立 teacher。
+- 老师/学生：必须同时具有可评分的 VLM 与训练有效的连续头；同架构强 checkpoint 优先，缺少连续头时先建立 teacher。YAML 草稿已改用上游 README 的真实 checkpoint：teacher `kesenZhaoNTU/NVCoT-Qwen3-VL-8B-Joint-GRPO-Step32`（连续头在 `visual_refiner.safetensors`），学生底座 `Qwen/Qwen3-VL-8B-Instruct`；教师优势仍待实测。
 - 数据：核验 DeepEyes-Datasets-47k 的训练部分，按原图去重划分；V* Bench 留作外部评测。没有可信 bbox 标签时不报告伪造的 IoU。
 - 资源：少量 A800、2 张 L20；准确卡数、显存和可用时段待实测。先做小样本，正式训练排队；是否租卡由测得的资源需求与实验信号决定。
 - OPD teacher 必须能在学生实际前缀上提供所需分布；只返回答案的普通 API 不自动满足要求。
@@ -49,7 +49,7 @@ cd Coord-OPD
 
 ## 已有模块与 CPU 自检
 
-- [research/coord_distill.py](research/coord_distill.py)：固定方差高斯 KL 与文本/连续动作联合 loss；自检含解析解、数值积分对照与梯度方向检查。
+- [research/coord_distill.py](research/coord_distill.py)：固定方差高斯 KL 与文本/连续动作联合 loss；自检含解析解、数值积分对照、梯度方向与被 mask 位置的 NaN 防护检查。
 - [research/eval_regions.py](research/eval_regions.py)：框变换与 IoU 原型；已按固定上游移植框级变换（文本框 /1000、`0.15 * tanh(raw)` 残差、0.02 最小框），像素级 crop 路径未移植。
 - [配置草稿](configs/research/pilot_crop_opd.yaml)：参数已与上游变换对齐，但尚未核验模型/数据字段，不能直接启动训练。具体缺口见 [接入说明](docs/INTEGRATION_NOTES.md)。
 

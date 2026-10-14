@@ -38,6 +38,7 @@
 |---|---|---|---|
 | 2026-10-13 | 研究启动文档与模板初始化 | 文档/结构；未训练 | plan.md、UPSTREAM.md、docs/START_HERE.md |
 | 2026-10-14 | 移植上游框级变换并补自检；数值 KL 对照；YAML 动作参数对齐 | CPU 合成自检（Python 3.12.10 / PyTorch 2.14.0+cpu） | research/eval_regions.py、research/coord_distill.py、docs/INTEGRATION_NOTES.md |
+| 2026-10-14 | 二次 review 修正：YAML 模型换上游 README 真实 checkpoint；补 Apache-2.0 许可证与 UPSTREAM 接入记录；被 mask 位置 NaN 防护；清理自相矛盾的文档 | CPU 合成自检；与上游函数的差分对照（未入库） | research/、third_party/NV-CoT/LICENSE、UPSTREAM.md、docs/INTEGRATION_NOTES.md |
 
 有实际验证后追加记录，并链接真实报告。源码审查不能替代完整 M0，更不能替代 GPU 运行。
 

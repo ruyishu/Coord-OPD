@@ -89,14 +89,17 @@ def compute_joint_coord_opd_loss(
         dict containing 'loss', 'loss_text', 'loss_coord', 'num_coords'
     """
     # 1. Text Token Reverse KL
-    teacher_text_logits = teacher_text_logits.detach()
+    # Masked teacher positions are neutralized and reductions use torch.where
+    # (NaN * 0 = NaN), so non-finite teacher values there cannot leak into the loss.
+    text_valid = text_valid_mask.bool()
+    teacher_text_logits = teacher_text_logits.detach().masked_fill(~text_valid.unsqueeze(-1), 0.0)
     s_log_p = F.log_softmax(student_text_logits / temperature, dim=-1)
     t_log_p = F.log_softmax(teacher_text_logits / temperature, dim=-1)
     s_p = torch.exp(s_log_p)
     token_kl = torch.sum(s_p * (s_log_p - t_log_p), dim=-1)
     
-    text_valid_count = text_valid_mask.sum().clamp(min=1.0)
-    loss_text = (token_kl * text_valid_mask.float()).sum() / text_valid_count
+    text_valid_count = text_valid.sum().clamp(min=1.0)
+    loss_text = torch.where(text_valid, token_kl, torch.zeros_like(token_kl)).sum() / text_valid_count
     
     # 2. Continuous Coordinate Reverse KL
     if coord_valid_mask is None:
@@ -104,14 +107,15 @@ def compute_joint_coord_opd_loss(
         
     flat_s_mu = student_coord_mu.view(-1, 4)
     flat_t_mu = teacher_coord_mu.view(-1, 4)
-    flat_coord_mask = coord_valid_mask.view(-1)
+    flat_coord_mask = coord_valid_mask.view(-1).bool()
     
+    flat_t_mu = flat_t_mu.detach().masked_fill(~flat_coord_mask.unsqueeze(-1), 0.0)
     coord_kl = compute_gaussian_reverse_kl(flat_s_mu, flat_t_mu, fixed_sigma=fixed_sigma)
     
     coord_count = flat_coord_mask.sum().clamp(min=1.0)
     has_coord = flat_coord_mask.any()
     
-    loss_coord = (coord_kl * flat_coord_mask.float()).sum() / coord_count if has_coord else torch.tensor(0.0, device=student_text_logits.device)
+    loss_coord = torch.where(flat_coord_mask, coord_kl, torch.zeros_like(coord_kl)).sum() / coord_count if has_coord else torch.tensor(0.0, device=student_text_logits.device)
     
     loss_joint = loss_text + (lambda_coord * loss_coord if has_coord else 0.0)
     
@@ -177,4 +181,20 @@ if __name__ == "__main__":
     
     joint_res["loss"].backward()
     assert s_coords.grad is not None and s_text.grad is not None, "Joint backward failed!"
+
+    # Test 4: masked-position NaN guard (non-finite teacher values only where masked)
+    g_text = torch.randn(B, L, V, requires_grad=True)
+    g_t_text = torch.randn(B, L, V)
+    g_text_mask = torch.ones(B, L, dtype=torch.bool)
+    g_text_mask[1, 2] = False
+    g_t_text[1, 2, :] = float("-inf")
+    g_coords = torch.randn(B, 2, 4, requires_grad=True)
+    g_t_coords = torch.randn(B, 2, 4)
+    g_t_coords[0, 1, :] = float("nan")  # c_mask[0, 1] is False
+    g_res = compute_joint_coord_opd_loss(g_text, g_t_text, g_text_mask, g_coords, g_t_coords, c_mask, lambda_coord=2.0)
+    g_res["loss"].backward()
+    assert torch.isfinite(g_res["loss"]), f"masked non-finite teacher leaked into loss: {g_res['loss']}"
+    assert torch.isfinite(g_text.grad).all() and torch.isfinite(g_coords.grad).all()
+    assert g_coords.grad[0, 1].abs().max().item() == 0.0 and g_text.grad[1, 2].abs().max().item() == 0.0
+    print("Masked-position NaN guard check passed (loss and grads finite).")
     print("All unit tests in coord_distill.py passed successfully!")

@@ -14,8 +14,11 @@ hardware:
   dtype: "bfloat16"
 
 model:
-  student_model_path: "kesenzhao/NV-CoT-Base"
-  teacher_model_path: "kesenzhao/NV-CoT-Final"
+  # IDs from the pinned upstream README. No pre-RL NV-CoT checkpoint is released,
+  # so the student starts from the README base model (continuous head initialized
+  # by upstream load_policy); the teacher repo ships visual_refiner.safetensors.
+  student_model_path: "Qwen/Qwen3-VL-8B-Instruct"
+  teacher_model_path: "kesenZhaoNTU/NVCoT-Qwen3-VL-8B-Joint-GRPO-Step32"
   hidden_size: 4096
   fixed_sigma: 0.15
   use_lora: true
@@ -32,9 +35,9 @@ data:
 opd:
   lambda_coord: 1.0          # weight for continuous coordinate Reverse KL
   residual_scale: 0.15        # upstream rollout.py: residual = 0.15 * tanh(raw)
-  residual_transform: "tanh"  # bounded residual; see research/eval_regions.py
-  min_box_size: 0.02          # upstream sanitize min box side
-  text_box_unit: 1000         # upstream text boxes are 0-1000; divided before sanitize
+  residual_transform: "tanh"  # doc-only: hardcoded in eval_regions.py, not read from config
+  min_box_size: 0.02          # upstream sanitize min box side (eval_regions `min_size`)
+  text_box_unit: 1000         # doc-only: hardcoded /1000 in eval_regions.text_box_to_coarse
   temperature: 1.0
 
 training:

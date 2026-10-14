@@ -3,6 +3,14 @@ eval_regions.py: Coordinate Transformation and Region Evaluation Metrics for Coo
 
 Two transforms live here:
 
+License / attribution: sanitize_normalized_box and the residual step in
+apply_nv_cot_action_transform are adapted from kesenzhao/NV-CoT
+continuous_policy.py (sanitize_normalized_boxes / apply_text_box_residual),
+Apache-2.0, pinned commit 0d36f9c515fc40864c3c4497f5de73148b77b8ac.
+Modification: ported from batched torch tensors to plain-Python single boxes.
+The upstream license is reproduced in third_party/NV-CoT/LICENSE; the rest of
+this file is original to this repository.
+
 1. Upstream-faithful port (use this for anything that must match NV-CoT replay):
    a faithful port of the pinned upstream path (rollout.py / continuous_policy.py
    at commit 0d36f9c515fc40864c3c4497f5de73148b77b8ac):
