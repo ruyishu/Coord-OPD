@@ -142,6 +142,25 @@ if __name__ == "__main__":
     grad = mu_s.grad
     assert (grad < 0).all(), "Gradient should pull student towards larger teacher values!"
     print("Gradient direction check passed!")
+
+    # Test 2b: general-sigma analytic KL vs numeric quadrature (per-dimension)
+    mu_s2 = torch.tensor([[0.1, 0.2, 0.3, 0.4]])
+    mu_t2 = torch.tensor([[0.3, 0.1, 0.4, 0.2]])
+    sig_s2 = torch.tensor([[0.2, 0.15, 0.1, 0.25]])
+    sig_t2 = torch.tensor([[0.1, 0.2, 0.3, 0.15]])
+    kl_analytic = compute_gaussian_reverse_kl(mu_s2, mu_t2, sig_s2, sig_t2).item()
+    kl_numeric = 0.0
+    for d in range(4):
+        ms, mt = mu_s2[0, d].item(), mu_t2[0, d].item()
+        ss, st = sig_s2[0, d].item(), sig_t2[0, d].item()
+        xs = torch.linspace(ms - 8 * ss, ms + 8 * ss, 4001)
+        log_qs = -0.5 * ((xs - ms) / ss) ** 2 - math.log(ss) - 0.5 * math.log(2 * math.pi)
+        log_qt = -0.5 * ((xs - mt) / st) ** 2 - math.log(st) - 0.5 * math.log(2 * math.pi)
+        kl_numeric += torch.trapz((log_qs - log_qt) * torch.exp(log_qs), xs).item()
+    assert abs(kl_numeric - kl_analytic) < 1e-3, (
+        f"Analytic vs numeric KL mismatch: {kl_analytic} vs {kl_numeric}"
+    )
+    print(f"General-sigma KL analytic vs numeric quadrature: {kl_analytic:.4f} vs {kl_numeric:.4f}")
     
     # Test 3: Joint loss self-check
     B, L, V = 2, 6, 50

@@ -1,6 +1,6 @@
 # 项目状态
 
-最后更新：2026-10-13。
+最后更新：2026-10-14。
 
 ## 已完成
 
@@ -11,6 +11,7 @@
 - [x] 本地 Markdown 相对链接、JSON 格式、CSV 表头和文件范围检查通过。
 
 - [x] 合并已有远程研究模块；内置 CPU 合成自检通过，范围见 [接入说明](INTEGRATION_NOTES.md)。
+- [x] 2026-10-14：`eval_regions.py` 移植固定上游框级变换（/1000、`0.15*tanh`、0.02 最小框）并补自检；`coord_distill.py` 增加一般方差解析 vs 数值对照；YAML 动作参数与上游对齐（仍无训练入口消费）。
 
 ## 尚未完成
 
@@ -36,6 +37,7 @@
 | 日期 | 工作 | 验证层级 | 证据 |
 |---|---|---|---|
 | 2026-10-13 | 研究启动文档与模板初始化 | 文档/结构；未训练 | plan.md、UPSTREAM.md、docs/START_HERE.md |
+| 2026-10-14 | 移植上游框级变换并补自检；数值 KL 对照；YAML 动作参数对齐 | CPU 合成自检（Python 3.12.10 / PyTorch 2.14.0+cpu） | research/eval_regions.py、research/coord_distill.py、docs/INTEGRATION_NOTES.md |
 
 有实际验证后追加记录，并链接真实报告。源码审查不能替代完整 M0，更不能替代 GPU 运行。
 

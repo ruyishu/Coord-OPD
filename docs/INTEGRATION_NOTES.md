@@ -11,13 +11,13 @@ python research/coord_distill.py
 python research/eval_regions.py
 ```
 
-全部退出码为 0。环境：Windows、Python 3.12.4、PyTorch 2.14.0+cpu、Pillow 12.1.1、NumPy 1.26.4、PyYAML 6.0.3。该记录描述本次 CPU 检查环境，不是推荐的 GPU 训练依赖锁定。
+全部退出码为 0。环境：Windows、Python 3.12.4、PyTorch 2.14.0+cpu、Pillow 12.1.1、NumPy 1.26.4、PyYAML 6.0.3。该记录描述本次 CPU 检查环境，不是推荐的 GPU 训练依赖锁定。2026-10-14 复跑（Windows、Python 3.12.10、PyTorch 2.14.0+cpu）：新增的上游变换移植检查与一般方差数值对照同样退出码 0。
 
 这些是脚本内置合成自检：验证有限输入上的 loss/梯度或区域/画布计算。没有加载真实模型、读取训练集、运行 GPU rollout 或测得任何任务收益。M0—M1 的完整验收仍按 [START_HERE.md](START_HERE.md) 执行。
 
 ## 首批必须处理的接入问题
 
-1. **坐标变换尚不一致**：当前 `eval_regions.py` 默认执行 `coarse + 0.2 * raw`，再排序、截断。固定上游 `rollout.py` 则先将粗框除以 1000 并 sanitize，执行 `apply_text_box_residual(coarse, 0.15 * tanh(raw), 0.02)`，再经过像素映射和 resize。差异包含非线性、幅度、最小框及越界处理；当前脚本不能用作上游轨迹重放的正确性依据。
+1. **坐标变换已按固定上游移植（2026-10-14，框级）**：`research/eval_regions.py` 新增 `text_box_to_coarse` / `sanitize_normalized_box` / `apply_nv_cot_action_transform`，忠实移植固定上游路径：`sanitize(bbox/1000, 0.02)` → `sanitize(coarse + 0.15 * tanh(raw), 0.02)`；自检覆盖残差有界、反转框、越界回移、最小框与零残差恒等。原 `apply_action_transform`（`coarse + 0.2 * raw`）保留为原型参照，不能用于上游重放。**仍未移植**：像素映射与 resize、多样本 batch、实际 crop 像素/哈希比对——重放正确性仍需 M1 真实轨迹验收。
 2. **复用真实变换**：接入时沿用固定上游的变换函数，记录 `coarse_box`、`raw_action`、`final_box`、图像尺寸和变换版本。比较普通框、倒置框、越界框、极小框和大残差；最终还要比对实际 crop 的像素/哈希。所有 RL/OPD 对照使用同一变换。
 3. **评分条件**：连续 KL 比较的是学生实际粗框条件下、变换前的 raw action 分布。不能替换为 teacher 自选粗框，也不能用最终截断框充当高斯均值。teacher 必须有经过训练且协议相容的连续头。
 4. **模型和梯度**：固定 `policy.py` 实际加载 Qwen3-VL 并检查 `hidden_size == 4096`；不能据维度相同推断支持另一模型。先验证目标学生加载、head/投影维度以及预期学生参数确实有梯度，再决定小模型适配。
@@ -25,9 +25,9 @@ python research/eval_regions.py
 
 ## 配置草稿核查
 
-`configs/research/pilot_crop_opd.yaml` 随远程代码保留，尚无消费该配置的训练入口。`kesenzhao/NV-CoT-Base`、`kesenzhao/NV-CoT-Final` 尚未核实，不能当作已发布 checkpoint。先核验真实权重及连续头；没有强且有效的 teacher 就先解决教师准备。
+`configs/research/pilot_crop_opd.yaml` 随远程代码保留，尚无消费该配置的训练入口。`kesenzhao/NV-CoT-Base`、`kesenzhao/NV-CoT-Final` 尚未核实，不能当作已发布 checkpoint；2026-10-14 实测两者匿名访问（API 与网页）均返回 401，属私有或 gated，公开可用性无法匿名确认，需登录后核验。先核验真实权重及连续头；没有强且有效的 teacher 就先解决教师准备。
 
-配置的 `action_scale: 0.2` 与固定上游不一致，接入时要同步改配置和变换实现，不能只改常数而遗漏 `tanh` 与最小框处理。注释中的 A800 80GB、L20 48GB 是草稿假设；准确显存、卡数和设备映射以 M0 实测为准。
+配置的 `action_scale: 0.2` 与固定上游不一致的问题已处理（2026-10-14）：YAML 改为 `residual_scale: 0.15` + `residual_transform: tanh` + `min_box_size: 0.02` + `text_box_unit: 1000`，与 `eval_regions.py` 移植的上游变换同名同义；仍无训练入口消费该配置。注释中的 A800 80GB、L20 48GB 是草稿假设；准确显存、卡数和设备映射以 M0 实测为准。
 
 ## 下一次开发验收
 

@@ -1,5 +1,6 @@
 # Pilot Experiment Configuration for Coord-OPD
-# Tailored for 1x A800 (80GB) + 2x L20 (48GB)
+# Draft resource assumption: 1x A800-class + 2x L20. Exact VRAM, usable card count
+# and device map must be measured in M0 before any run consumes this file.
 
 experiment:
   project: "coord-opd"
@@ -30,7 +31,10 @@ data:
 
 opd:
   lambda_coord: 1.0          # weight for continuous coordinate Reverse KL
-  action_scale: 0.2          # residual scale factor
+  residual_scale: 0.15        # upstream rollout.py: residual = 0.15 * tanh(raw)
+  residual_transform: "tanh"  # bounded residual; see research/eval_regions.py
+  min_box_size: 0.02          # upstream sanitize min box side
+  text_box_unit: 1000         # upstream text boxes are 0-1000; divided before sanitize
   temperature: 1.0
 
 training:

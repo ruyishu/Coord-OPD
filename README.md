@@ -49,18 +49,18 @@ cd Coord-OPD
 
 ## 已有模块与 CPU 自检
 
-- [research/coord_distill.py](research/coord_distill.py)：固定方差高斯 KL 与文本/连续动作联合 loss。
-- [research/eval_regions.py](research/eval_regions.py)：框变换与 IoU 原型；变换尚未对齐上游。
-- [配置草稿](configs/research/pilot_crop_opd.yaml)：参数尚未核验，不能直接启动训练。具体缺口见 [接入说明](docs/INTEGRATION_NOTES.md)。
+- [research/coord_distill.py](research/coord_distill.py)：固定方差高斯 KL 与文本/连续动作联合 loss；自检含解析解、数值积分对照与梯度方向检查。
+- [research/eval_regions.py](research/eval_regions.py)：框变换与 IoU 原型；已按固定上游移植框级变换（文本框 /1000、`0.15 * tanh(raw)` 残差、0.02 最小框），像素级 crop 路径未移植。
+- [配置草稿](configs/research/pilot_crop_opd.yaml)：参数已与上游变换对齐，但尚未核验模型/数据字段，不能直接启动训练。具体缺口见 [接入说明](docs/INTEGRATION_NOTES.md)。
 
-这些脚本使用 PyTorch（张量与梯度计算）；区域脚本目前还导入 NumPy（数值计算）。以下命令只运行脚本内置的合成自检，需要已有相应 Python 依赖：
+这些脚本使用 PyTorch（张量与梯度计算）。以下命令只运行脚本内置的合成自检，需要已有相应 Python 依赖：
 
 ```bash
 python research/coord_distill.py
 python research/eval_regions.py
 ```
 
-2026-10-13 已在 CPU 执行通过。测试范围、环境版本和仍需处理的问题见 [INTEGRATION_NOTES.md](docs/INTEGRATION_NOTES.md)。
+2026-10-13 首次执行通过；2026-10-14 复跑通过（Python 3.12.10、PyTorch 2.14.0+cpu），新增上游变换移植检查与一般方差的数值对照。测试范围、环境版本和仍需处理的问题见 [INTEGRATION_NOTES.md](docs/INTEGRATION_NOTES.md)。
 
 ## 实验原则
 
