@@ -31,3 +31,20 @@ __pycache__/
 Thumbs.db
 .idea/
 .vscode/
+
+# Additional upstream research output patterns
+*$py.class
+*.so
+.Python
+env/
+teacher_weights/
+student_weights/
+*.log
+tensorboard/
+.system_generated/
+crops/
+*.png
+*.jpg
+*.jpeg
+cache/
+.cache/

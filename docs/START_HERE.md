@@ -2,6 +2,8 @@
 
 目标：确认真正被 train.py 调用的动作头、粗框/raw action/final box 变换和 checkpoint，重放 32 条裁剪轨迹，检查 2B 适配条件。
 
+先读 [INTEGRATION_NOTES.md](INTEGRATION_NOTES.md)：已有模块是接入起点，不能直接视为 M1 完成。
+
 ## M0：核查并固定真实输入
 
 1. 阅读 [plan.md](../plan.md) 和 [UPSTREAM.md](../UPSTREAM.md)，记录实际采用的上游提交与入口。

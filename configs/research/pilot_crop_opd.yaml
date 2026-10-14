@@ -1,0 +1,44 @@
+# Pilot Experiment Configuration for Coord-OPD
+# Tailored for 1x A800 (80GB) + 2x L20 (48GB)
+
+experiment:
+  project: "coord-opd"
+  name: "pilot_crop_nv_cot_8b"
+  seed: 42
+  max_crops_per_turn: 2
+
+hardware:
+  student_device: "cuda:0"   # A800: Student training & rollout
+  teacher_device: "cuda:1"   # L20: Frozen Teacher scoring & continuous head
+  dtype: "bfloat16"
+
+model:
+  student_model_path: "kesenzhao/NV-CoT-Base"
+  teacher_model_path: "kesenzhao/NV-CoT-Final"
+  hidden_size: 4096
+  fixed_sigma: 0.15
+  use_lora: true
+  lora_r: 16
+  lora_alpha: 32
+
+data:
+  dataset_name: "DeepEyes-Datasets-47k"
+  eval_benchmark: "vstar_bench"
+  num_pilot_samples: 1500
+  num_dev_samples: 300
+  max_image_resolution: [1024, 1024]
+
+opd:
+  lambda_coord: 1.0          # weight for continuous coordinate Reverse KL
+  action_scale: 0.2          # residual scale factor
+  temperature: 1.0
+
+training:
+  micro_batch_size: 1
+  gradient_accumulation_steps: 8
+  learning_rate_backbone: 1.0e-5
+  learning_rate_refiner: 5.0e-5
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  warmup_ratio: 0.05
+  num_updates: 50            # milestone M4 check: 50 updates

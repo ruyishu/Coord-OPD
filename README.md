@@ -8,7 +8,7 @@
 
 ## 当前状态
 
-本仓库已完成研究计划和开发文档初始化；训练器、数据流水线和 GPU 实验尚未完成。没有实验分数或已验证收益。所有后续状态与证据记录在 [STATUS.md](docs/STATUS.md)。
+本仓库已有研究计划、开发文档及若干研究模块初稿；训练器、数据流水线和 GPU 实验尚未完成。现有脚本的 CPU 合成自检通过，但不代表已完成真实轨迹重放。没有实验分数或已验证收益。所有后续状态与证据记录在 [STATUS.md](docs/STATUS.md)。
 
 | 内容 | 入口 |
 |---|---|
@@ -18,6 +18,7 @@
 | 对照实验与成本统计 | [EXPERIMENTS.md](docs/EXPERIMENTS.md) |
 | 实验信息模板 | [experiment.template.json](configs/experiment.template.json) |
 | 结果记录 | [results/README.md](results/README.md) |
+| 现有代码与接入缺口 | [INTEGRATION_NOTES.md](docs/INTEGRATION_NOTES.md) |
 | 开发约定 | [AGENTS.md](AGENTS.md) |
 
 ## 第一版范围
@@ -26,7 +27,7 @@
 
 首个交付：确认真正被 train.py 调用的动作头、粗框/raw action/final box 变换和 checkpoint，重放 32 条裁剪轨迹，检查 2B 适配条件。
 
-工程基础为 [kesenzhao/NV-CoT](https://github.com/kesenzhao/NV-CoT/tree/0d36f9c515fc40864c3c4497f5de73148b77b8ac)，核查提交 `0d36f9c515fc40864c3c4497f5de73148b77b8ac`。当前仓库没有导入上游源码；源码路径指向上游，拟新增模块见计划。
+工程基础为 [kesenzhao/NV-CoT](https://github.com/kesenzhao/NV-CoT/tree/0d36f9c515fc40864c3c4497f5de73148b77b8ac)，核查提交 `0d36f9c515fc40864c3c4497f5de73148b77b8ac`。当前仓库没有导入上游完整训练代码；下列研究模块为本仓库初稿，尚未接通上游训练循环。
 
 ## 模型、数据与资源
 
@@ -44,7 +45,22 @@ cd Coord-OPD
 
 `git clone` 下载仓库，`cd` 进入目录。私有仓库需先正常登录 GitHub。随后阅读 [START_HERE.md](docs/START_HERE.md)，完成 M0—M1。
 
-当前没有安装或训练命令；`configs/experiment.template.json` 是待填写的实验记录，不是可交给训练器的配置。跑通后再加入真实启动命令。
+当前尚无完整训练启动命令；`configs/experiment.template.json` 是待填写的实验记录，不是可交给训练器的配置。跑通后再加入真实启动命令。
+
+## 已有模块与 CPU 自检
+
+- [research/coord_distill.py](research/coord_distill.py)：固定方差高斯 KL 与文本/连续动作联合 loss。
+- [research/eval_regions.py](research/eval_regions.py)：框变换与 IoU 原型；变换尚未对齐上游。
+- [配置草稿](configs/research/pilot_crop_opd.yaml)：参数尚未核验，不能直接启动训练。具体缺口见 [接入说明](docs/INTEGRATION_NOTES.md)。
+
+这些脚本使用 PyTorch（张量与梯度计算）；区域脚本目前还导入 NumPy（数值计算）。以下命令只运行脚本内置的合成自检，需要已有相应 Python 依赖：
+
+```bash
+python research/coord_distill.py
+python research/eval_regions.py
+```
+
+2026-10-13 已在 CPU 执行通过。测试范围、环境版本和仍需处理的问题见 [INTEGRATION_NOTES.md](docs/INTEGRATION_NOTES.md)。
 
 ## 实验原则
 
