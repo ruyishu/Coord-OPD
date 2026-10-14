@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# PyTorch / Checkpoints
+*.pt
+*.pth
+*.bin
+*.safetensors
+checkpoints/
+models/
+teacher_weights/
+student_weights/
+
+# Training Logs & Profiles
+runs/
+wandb/
+*.log
+tensorboard/
+.system_generated/
+
+# Data, intermediate crops & Cache
+data/
+datasets/
+crops/
+*.png
+*.jpg
+*.jpeg
+cache/
+.cache/
+
+# Environments & OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
