@@ -1,1 +1,0 @@
-run_id,method_id,seed,eval_dataset,eval_split,num_evaluated,accuracy,failed_samples,a800_gpu_hours,l20_gpu_hours,teacher_a800_gpu_hours,teacher_l20_gpu_hours,teacher_preparation_gpu_hours_manifest,wall_seconds,peak_memory_gib,inference_total_tokens,tool_calls_mean,report_path
