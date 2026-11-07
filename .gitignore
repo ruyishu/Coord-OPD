@@ -44,6 +44,7 @@ tensorboard/
 .system_generated/
 crops/
 *.png
+!assets/*.png
 *.jpg
 *.jpeg
 cache/
