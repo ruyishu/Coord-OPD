@@ -1,0 +1,21 @@
+README.md
+  s_ad79e5c6d964d9::t_805fbe84451fca 1,3,5,7,11,13-15,19,21,23,25-27,29,31,33-35,37-39,41,43-45,56-58,62,65,68,71
+README_zh.md
+  s_ad79e5c6d964d9::t_29e6ec4ab4751f 1,3,5-7,11-15,17,19,21,23-24,26-28,30-31,33-35,37-38,40-42,44-50,54-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "f62a92de6d7f8cef7c392c7572e9ea59de84fcca",
+  "prompts": {},
+  "sessions": {
+    "s_ad79e5c6d964d9": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_jj9f291suwt4",
+        "model": "gemini-4-argon"
+      },
+      "human_author": "ruyishu1 <ruyishu1@users.noreply.github.com>"
+    }
+  }
+}
