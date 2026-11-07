@@ -1,0 +1,19 @@
+.gitignore
+  s_ad79e5c6d964d9::t_54a9da9926c4e8 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "57bd83a8b4efb9cb34d23f399f8da96e07df5a9c",
+  "prompts": {},
+  "sessions": {
+    "s_ad79e5c6d964d9": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_jj9f291suwt4",
+        "model": "gemini-4-argon"
+      },
+      "human_author": "ruyishu1 <ruyishu1@users.noreply.github.com>"
+    }
+  }
+}
