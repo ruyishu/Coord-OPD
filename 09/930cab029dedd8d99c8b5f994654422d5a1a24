@@ -1,0 +1,26 @@
+README.md
+  s_ad79e5c6d964d9::t_d3151f9fcb9595 9,39,48-56,67,101
+  s_ad79e5c6d964d9::t_b08ee7dd018fa5 1,3,5,7,11,13,15-18,20,22,24,26-28,30-32,34-37,41,43,45,47,57-58,60,62-65,69,71-90,92-100
+geo_qkl/__init__.py
+  s_ad79e5c6d964d9::t_95280a9c399a4b 1-4
+README_zh.md
+  s_ad79e5c6d964d9::t_e697905a3a6f76 1-84
+geo_qkl/train.py
+  s_ad79e5c6d964d9::t_cf72d659dc6244 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.52-trip",
+  "base_commit_sha": "09930cab029dedd8d99c8b5f994654422d5a1a24",
+  "prompts": {},
+  "sessions": {
+    "s_ad79e5c6d964d9": {
+      "agent_id": {
+        "tool": "chengxiaobang",
+        "id": "s_jj9f291suwt4",
+        "model": "gemini-4-argon"
+      },
+      "human_author": "ruyishu1 <ruyishu1@users.noreply.github.com>"
+    }
+  }
+}
